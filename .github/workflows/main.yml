@@ -24,8 +24,10 @@ jobs:
           registry-url: 'https://registry.npmjs.org/'
           scope: '@gonextgames'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Clean install dependencies
+        run: |
+          rm -f package-lock.json
+          npm install --no-package-lock
 
       - name: Build
         run: npm run build
