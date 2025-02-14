@@ -36,7 +36,8 @@
       "@types/node": "22.10.5",
       "@types/react": "19.0.6",
       "postcss": "^8.4.35",
-      "tsup": "^8.0.2"
+      "tsup": "^8.0.2",
+      "typescript": "^5.0.0"
     },
     "peerDependencies": {
       "react": ">=16.8.0",
