@@ -1,9 +1,10 @@
 import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import crypto from 'crypto';
+
 if (!process.env.AWS_ACCESS_KEY || !process.env.AWS_SECRET) {
   throw new Error('AWS credentials are not properly configured');
 }
+
 const s3Client = new S3Client({
   region: "us-west-2",
   credentials: {

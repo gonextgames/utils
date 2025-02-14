@@ -1,7 +1,7 @@
 export function useStripe() {
   const initiateDonation = async (amount = 500) => {
     try {
-      const response = await fetch('/api/stripe/create-donation-session', {
+      const response = await fetch('https://api.templative.net/stripe/create-donation-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

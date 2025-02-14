@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
-import { getUser, getUserByEmail } from '@/lib/actions/users'
-import { comparePasswords } from '@/lib/auth/passwordHashing'
+import { getUser, getUserByEmail } from './users'
+import { comparePasswords } from './passwordHashing'
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY
 

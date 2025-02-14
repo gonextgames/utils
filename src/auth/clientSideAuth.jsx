@@ -2,7 +2,7 @@
 
 import { useState, useEffect, createContext, useContext } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuthStore } from '@/lib/auth/authStore'
+import { useAuthStore } from './authStore'
 
 const AuthContext = createContext({})
 
