@@ -1,4 +1,4 @@
-export default function trackEvent(eventName, eventParams) {
+export const trackEvent = function(eventName, eventParams) {
     if (process.env.NODE_ENV === 'development') {
       const eventKey = `${eventName}-${JSON.stringify(eventParams)}`;
       if (window._lastTrackedEvent === eventKey) {
