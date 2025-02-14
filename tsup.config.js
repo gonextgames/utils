@@ -31,5 +31,8 @@ export default defineConfig({
     'react-youtube',
     '@aws-sdk/client-s3',
     'zustand'
-  ]
+  ],
+  outDir: 'dist',
+  sourcemap: true,
+  platform: 'browser'
 })
