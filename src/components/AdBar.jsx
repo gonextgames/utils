@@ -1,5 +1,4 @@
 'use client'
-import "./AdBar.css"
 import { useState } from 'react'
 import { trackEvent } from '../analytics'
 
