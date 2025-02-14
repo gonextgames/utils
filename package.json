@@ -12,8 +12,8 @@
       "src/**/*.css"
     ],
     "scripts": {
-      "build": "tsup src/index.js --format cjs,esm --minify --clean",
-      "dev": "tsup src/index.js --format cjs,esm --watch",
+      "build": "esbuild src/index.js --bundle --minify --platform=neutral --format=esm --outdir=dist && esbuild src/index.js --bundle --minify --platform=neutral --format=cjs --outdir=dist",
+      "dev": "esbuild src/index.js --bundle --watch --platform=neutral --format=esm --outdir=dist",
       "lint": "eslint src/**/*.{js,jsx}"
     },
     "dependencies": {
@@ -35,9 +35,8 @@
     "devDependencies": {
       "@types/node": "22.10.5",
       "@types/react": "19.0.6",
-      "postcss": "^8.4.35",
-      "tsup": "^8.0.2",
-      "typescript": "^5.0.0"
+      "esbuild": "^0.20.1",
+      "postcss": "^8.4.35"
     },
     "peerDependencies": {
       "react": ">=16.8.0",
