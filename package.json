@@ -1,0 +1,37 @@
+{
+    "name": "@gonextgames/utils",
+    "version": "0.1.0",
+    "private": true,
+    "publishConfig": {
+      "registry": "https://npm.pkg.github.com"
+    },
+    "main": "dist/index.js",
+    "module": "dist/index.mjs",
+    "types": "dist/index.d.ts",
+    "files": [
+      "dist"
+    ],
+    "scripts": {
+      "build": "tsup",
+      "dev": "tsup --watch",
+      "lint": "eslint src/**/*.js"
+    },
+    "dependencies": {
+      "@aws-sdk/client-dynamodb": "^3.726.1",
+      "@aws-sdk/client-s3": "^3.726.1",
+      "@aws-sdk/lib-dynamodb": "^3.726.1",
+      "@aws-sdk/s3-request-presigner": "^3.726.1",
+      "nodemailer": "^6.9.16",
+      "openai": "^4.0.0"
+    },
+    "peerDependencies": {
+      "react": "^18.0.0 || ^19.0.0"
+    },
+    "devDependencies": {
+      "@types/node": "^22.10.5",
+      "@types/react": "^19.0.6",
+      "tsup": "^8.0.0",
+      "typescript": "^5.0.0"
+    }
+  }
+  
