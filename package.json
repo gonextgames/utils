@@ -8,12 +8,13 @@
     "main": "dist/index.js",
     "module": "dist/index.mjs",
     "files": [
-      "dist"
+      "dist",
+      "src/**/*.css"
     ],
     "scripts": {
-      "build": "tsup src/index.js --format cjs,esm --clean --treeshake --minify --metafile --platform=neutral",
-      "dev": "tsup src/index.js --format cjs,esm --watch", 
-      "lint": "eslint src/**/*.js"
+      "build": "tsup src/index.js --format cjs,esm --dts false --minify --clean",
+      "dev": "tsup src/index.js --format cjs,esm --dts false --watch",
+      "lint": "eslint src/**/*.{js,jsx}"
     },
     "dependencies": {
       "@aws-sdk/client-dynamodb": "^3.726.1",
@@ -32,11 +33,10 @@
       "zustand": "^5.0.3"
     },
     "devDependencies": {
-      "@types/node": "22.10.5", 
+      "@types/node": "22.10.5",
       "@types/react": "19.0.6",
       "postcss": "^8.4.35",
-      "tsup": "^8.0.2",
-      "typescript": "^5.3.3"
+      "tsup": "^8.0.2"
     },
     "peerDependencies": {
       "react": ">=16.8.0",

@@ -32,6 +32,10 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Copy CSS files to dist
+        run: |
+          find src -name "*.css" -exec cp --parents {} dist \;
+
       - name: Publish to npm
         run: npm publish
         env:
