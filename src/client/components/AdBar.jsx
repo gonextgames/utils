@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { trackEvent } from '../analytics'
+import { trackEvent } from '../analytics/trackEvent'
 
 const defaultLinks = [
     {

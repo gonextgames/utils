@@ -1,4 +1,5 @@
-export * from './clients/index.js';
-export * from './auth/index.js';
-export * from './analytics/index.js';
-export * from './components/index.js';
+// Server-side exports
+export * as server from './server';
+
+// Client-side exports
+export * as client from './client';
