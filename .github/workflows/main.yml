@@ -24,6 +24,18 @@ jobs:
           registry-url: 'https://registry.npmjs.org/'
           scope: '@gonextgames'
 
+      - name: Check package versions match
+        run: |
+          CLIENT_VERSION=$(node -p "require('./client/package.json').version")
+          SERVER_VERSION=$(node -p "require('./server/package.json').version")
+          if [ "$CLIENT_VERSION" != "$SERVER_VERSION" ]; then
+            echo "Error: Package versions do not match!"
+            echo "Client version: $CLIENT_VERSION"
+            echo "Server version: $SERVER_VERSION"
+            exit 1
+          fi
+          echo "Both packages at version $CLIENT_VERSION"
+          
       - name: Install dependencies (Client)
         working-directory: ./client
         run: |
@@ -42,17 +54,6 @@ jobs:
           cd server && npm run build &
           wait
 
-      - name: Check package versions match
-        run: |
-          CLIENT_VERSION=$(node -p "require('./client/package.json').version")
-          SERVER_VERSION=$(node -p "require('./server/package.json').version")
-          if [ "$CLIENT_VERSION" != "$SERVER_VERSION" ]; then
-            echo "Error: Package versions do not match!"
-            echo "Client version: $CLIENT_VERSION"
-            echo "Server version: $SERVER_VERSION"
-            exit 1
-          fi
-          echo "Both packages at version $CLIENT_VERSION"
 
       - name: Publish client package
         working-directory: ./client

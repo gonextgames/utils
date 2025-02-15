@@ -1,5 +1,5 @@
 import { PutCommand, GetCommand, UpdateCommand, DeleteCommand, QueryCommand, BatchGetCommand } from '@aws-sdk/lib-dynamodb';
-import { dynamoDb } from '../../server/dynamoDb';
+import { dynamoDb } from '../dynamoDb';
 import { hashPassword } from './passwordHashing';
 import { v4 as uuidv4 } from 'uuid';
 
