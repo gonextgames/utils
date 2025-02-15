@@ -1,4 +1,4 @@
-name: Publish Package to npm
+name: Publish Packages to npm
 
 on:
   push:
@@ -24,15 +24,44 @@ jobs:
           registry-url: 'https://registry.npmjs.org/'
           scope: '@gonextgames'
 
-      - name: Clean install dependencies
+      - name: Install dependencies (Client)
+        working-directory: ./client
         run: |
           rm -f package-lock.json
           npm install --no-package-lock
 
-      - name: Build
-        run: npm run build
+      - name: Install dependencies (Server)
+        working-directory: ./server
+        run: |
+          rm -f package-lock.json
+          npm install --no-package-lock
 
-      - name: Publish to npm
+      - name: Build packages
+        run: |
+          cd client && npm run build &
+          cd server && npm run build &
+          wait
+
+      - name: Check package versions match
+        run: |
+          CLIENT_VERSION=$(node -p "require('./client/package.json').version")
+          SERVER_VERSION=$(node -p "require('./server/package.json').version")
+          if [ "$CLIENT_VERSION" != "$SERVER_VERSION" ]; then
+            echo "Error: Package versions do not match!"
+            echo "Client version: $CLIENT_VERSION"
+            echo "Server version: $SERVER_VERSION"
+            exit 1
+          fi
+          echo "Both packages at version $CLIENT_VERSION"
+
+      - name: Publish client package
+        working-directory: ./client
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish server package
+        working-directory: ./server
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
