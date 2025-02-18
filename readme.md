@@ -126,19 +126,4 @@ The users table must have:
 
 And a `email-user_id-index` secondary index.
 
-## Error Intercepting and Logging
-
-Logging errors is relatively plug and play. Within the main layout:
-
-```js
-import { AuthProvider, ErrorBoundary } from '@gonextgames/utils-client';
-
-import { interceptErrors } from '@gonextgames/utils-server';
-interceptErrors('bgp_server');
-
-return <ErrorBoundary applicationLayer="bgp_react" isFallbackEnabled={false}>
-    {children}    
-</ErrorBoundary>
-```
-
 ## Event Tracking
