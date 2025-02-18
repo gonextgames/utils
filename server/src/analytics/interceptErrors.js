@@ -26,7 +26,7 @@ export const interceptErrors = (applicationLayer) => {
         application_layer: applicationLayer,
         timestamp: new Date().toISOString(),
         nodeVersion: process.version,
-        environment: process.env.NODE_ENV,
+        environment: process.env.ENVIRONMENT,
         correlation_id: generateCorrelationId()
       });
     } catch (loggingError) {

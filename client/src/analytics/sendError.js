@@ -1,5 +1,5 @@
 export const sendError = async (error, route, additionalContext = {}) => {
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.ENVIRONMENT !== 'production') {
     console.error(error);
     return;
   }
