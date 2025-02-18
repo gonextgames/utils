@@ -1,6 +1,21 @@
-export * from './dynamoDb';
-export * from './email';
-export * from './openAI';
-export * from './s3';
-export * from './auth';
-export * from './analytics';
+export { dynamoDb } from './dynamoDb';
+export { sendEmail } from './email';
+export { getChatCompletion } from './openAI';
+
+export {
+    getByGuid,
+    generateMd5HashFromImage,
+    uploadImage,
+    uploadPdf
+} from './s3';
+
+export { 
+  getUserFromToken, 
+  updateUser, 
+  loginWithEmailAndPassword,
+  registerUser,
+  generateToken,
+  getUser,
+  getUsersByIds
+} from './auth';
+
