@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
       await checkAuth()
     }
     initialCheck()
-  }, []) // Remove checkAuth from dependencies
+  }, [])
 
   const checkAuth = async () => {
     const randomNumber = Math.floor(Math.random()*100)
@@ -75,18 +75,11 @@ export function AuthProvider({ children }) {
       if (!response.ok) throw new Error('Login failed')
       
       const data = await response.json()
-      
-      // Update auth state
       await setAuth(data.user)
       
       // Verify auth state is set
       const verifyResponse = await fetch('/api/auth/verify')
       if (!verifyResponse.ok) throw new Error('Auth verification failed')
-      
-      // Only redirect after confirmation
-      const params = new URLSearchParams(window.location.search)
-      const from = params.get('from') || "/"
-      router.push(from)
     } catch (error) {
       clearAuth()
       throw error
@@ -121,7 +114,6 @@ export function AuthProvider({ children }) {
       }
 
       setAuth(data.user)
-      router.push('/getting-started')
     } catch (error) {
       throw error
     }
