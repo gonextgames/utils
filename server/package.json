@@ -1,15 +1,22 @@
 {
 "name": "@gonextgames/utils-server",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "publishConfig": {
       "registry": "https://registry.npmjs.org/",
       "access": "public"
     },
     "main": "dist/index.js",
     "module": "dist/index.js",
+    "exports": {
+      ".": {
+        "import": "./dist/index.js",
+        "require": "./dist/index.js"
+      }
+    },
     "files": [
       "dist"
     ],
+    "type": "module",
     "scripts": {
       "build": "babel src -d dist --copy-files",
       "prepare": "npm run build",
