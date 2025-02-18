@@ -1,11 +1,6 @@
 {
   "presets": [
-    ["@babel/preset-env", {
-      "targets": {
-        "node": "20"
-      },
-      "modules": "auto"
-    }],
+    "@babel/preset-env",
     ["@babel/preset-react", {
       "runtime": "automatic"
     }]
