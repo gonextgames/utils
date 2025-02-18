@@ -7,7 +7,7 @@ export const trackEvent = function(eventName, eventParams) {
       window._lastTrackedEvent = eventKey;
     }
 
-    console.log('trackEvent', eventName, eventParams);
+    // console.log('trackEvent', eventName, eventParams);
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', eventName, eventParams);
     }

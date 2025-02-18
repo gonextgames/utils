@@ -1,3 +1,3 @@
-export * from './authStore';
 export * from './clientSideAuth';
-export * from './edgeAuth';
+
+export { AuthProvider, useAuth } from './clientSideAuth';

@@ -3,7 +3,7 @@ import { dynamoDb } from '../dynamoDb';
 import { hashPassword } from './passwordHashing';
 import { v4 as uuidv4 } from 'uuid';
 
-export async function createUser(id, name, email, hashedPassword, tableName) {
+async function createUser(id, name, email, hashedPassword, otherData, tableName) {
   if (!tableName) throw new Error('Table name is required');
   try {
     const item = {
@@ -11,6 +11,7 @@ export async function createUser(id, name, email, hashedPassword, tableName) {
       name,
       email: email,
       password: hashedPassword,
+      ...otherData,
       createdAt: new Date().toISOString()
     };
     
@@ -22,13 +23,13 @@ export async function createUser(id, name, email, hashedPassword, tableName) {
     return item;
   } catch (error) {
     console.error('Error in createUser:', error);
-    throw error;
+    throw new Error('An error occurred while creating the user');
   }
 }
 
 export async function getUser(userId, tableName) {
-  if (!tableName) throw new Error('Table name is required');
   try {
+    if (!tableName) throw new Error('Table name is required');
     const result = await dynamoDb.send(new GetCommand({
       TableName: tableName,
       Key: { user_id: userId },
@@ -37,7 +38,7 @@ export async function getUser(userId, tableName) {
     return result.Item;
   } catch (error) {
     console.error('Error in getUser:', error);
-    throw error;
+    throw new Error('An error occurred while retrieving the user');
   }
 }
 
@@ -66,26 +67,26 @@ export async function updateUser(id, updates, tableName) {
   return result.Attributes;
 } catch (error) {
   console.error('Error in updateUser:', error);
-  throw error;
+  throw new Error('An error occurred while updating the user');
 }
 }
 
 export async function deleteUser(id, tableName) {
-  if (!tableName) throw new Error('Table name is required');
   try {
+    if (!tableName) throw new Error('Table name is required');
     await dynamoDb.send(new DeleteCommand({
       TableName: tableName,
-      Key: { id },
+      Key: { user_id: id },
     }));
   } catch (error) {
     console.error('Error in deleteUser:', error);
-    throw error;
+    throw new Error('An error occurred while deleting the user');
   }
 }
 
 export async function getUserByEmail(email, tableName) {
-  if (!tableName) throw new Error('Table name is required');
   try {
+    if (!tableName) throw new Error('Table name is required');
     const result = await dynamoDb.send(new QueryCommand({
     TableName: tableName,
     IndexName: 'email-user_id-index',
@@ -99,14 +100,13 @@ export async function getUserByEmail(email, tableName) {
   return result.Items[0];
 } catch (error) {
   console.error('Error in getUserByEmail:', error);
-  throw error;
+  throw new Error('An error occurred while retrieving the user');
 }
 }
 
-export async function registerUser(userData, tableName) {
-  if (!tableName) throw new Error('Table name is required');
+export async function registerUser(name, email, password, otherData, tableName) {
   try {
-    const { email, password, name } = userData
+    if (!tableName) throw new Error('Table name is required');
     
     // Check if user exists
     const existingUser = await getUserByEmail(email, tableName)
@@ -127,7 +127,7 @@ export async function registerUser(userData, tableName) {
       password: hashedPassword,
     }
 
-    await createUser(user.user_id, user.name, user.email, user.password, tableName)
+    await createUser(user.user_id, user.name, user.email, user.password, otherData, tableName)
 
     const { password: _, ...userWithoutPassword } = user
     return userWithoutPassword
@@ -137,49 +137,49 @@ export async function registerUser(userData, tableName) {
       message: error.message,
       stack: error.stack
     })
-    throw error
+    throw new Error('An error occurred while registering the user');
   }
 }
 
 export async function getUsersByIds(userIds, tableName) {
-  if (!tableName) throw new Error('Table name is required');
   try {
+    if (!tableName) throw new Error('Table name is required');
     // If no userIds provided, return empty array
     if (!userIds || userIds.length === 0) {
       return [];
     }
 
-  // DynamoDB only allows 25 items per BatchGetItem
-  const batchSize = 25;
-  let allUsers = [];
+    // DynamoDB only allows 25 items per BatchGetItem
+    const batchSize = 25;
+    let allUsers = [];
 
-  // Process users in batches
-  for (let i = 0; i < userIds.length; i += batchSize) {
-    const batch = userIds.slice(i, i + batchSize);
-    
-    const result = await dynamoDb.send(new BatchGetCommand({
-      RequestItems: {
-        [tableName]: {
-          Keys: batch.map(id => ({ user_id: id }))
-        }
-      }
-    }));
-
-    if (result.Responses && result.Responses[tableName]) {
-      // Remove sensitive data from users
-      const safeUsers = result.Responses[tableName].map(user => {
-        const { password, ...safeUser } = user;
-        return safeUser;
-      });
+    // Process users in batches
+    for (let i = 0; i < userIds.length; i += batchSize) {
+      const batch = userIds.slice(i, i + batchSize);
       
-      allUsers = [...allUsers, ...safeUsers];
-    }
-  }
+      const result = await dynamoDb.send(new BatchGetCommand({
+        RequestItems: {
+          [tableName]: {
+            Keys: batch.map(id => ({ user_id: id }))
+          }
+        }
+      }));
 
-  return allUsers;
-} catch (error) {
-  console.error('Error in getUsersByIds:', error);
-  throw error;
-}
+      if (result.Responses && result.Responses[tableName]) {
+        // Remove sensitive data from users
+        const safeUsers = result.Responses[tableName].map(user => {
+          const { password, ...safeUser } = user;
+          return safeUser;
+        });
+        
+        allUsers = [...allUsers, ...safeUsers];
+      }
+    }
+
+    return allUsers;
+  } catch (error) {
+    console.error('Error in getUsersByIds:', error);
+    throw new Error('An error occurred while retrieving the users');
+  }
 }
 

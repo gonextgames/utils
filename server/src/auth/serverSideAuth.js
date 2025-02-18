@@ -1,76 +1,90 @@
 import jwt from 'jsonwebtoken'
 import { getUser, getUserByEmail } from './users'
 import { comparePasswords } from './passwordHashing'
+import { cookies } from 'next/headers'
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY
 
-export async function generateToken(payload) {
+async function setToken(tokenName, userId, email) {
   try {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' })
+    const payload = { user_id: userId, email: email }
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' })
+    const cookieStore = await cookies()
+    cookieStore.set(tokenName, token, {
+      httpOnly: true,
+      secure: process.env.ENVIRONMENT === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 // 7 days
+    })
   } catch (error) {
-    console.error('Error in generateToken:', error)
+    console.error('Error in generateToken:', error.message)
     throw error
   }
 }
+async function getUserIdAndEmailFromToken(tokenName) {
+  const cookieStore = await cookies()
+    const token = cookieStore.get(tokenName)?.value
+    if (!token) {
+      // console.warn('No token found in cookies')
+      return null
+    }
 
-export async function verifyToken(token) {
-  try {
     const decodedToken = decodeURIComponent(token)
-    const verified = jwt.verify(decodedToken, JWT_SECRET)
+    const verifiedUser = jwt.verify(decodedToken, JWT_SECRET)
     
     // Add additional validation
-    if (!verified.user_id || !verified.exp) {
+    if (!verifiedUser || !verifiedUser.user_id || !verifiedUser.exp || !verifiedUser.email) {
+      console.warn('Invalid or expired token', verifiedUser)
       return null
     }
     
     // Check if token is about to expire (within 5 minutes)
     const fiveMinutes = 5 * 60 * 1000
-    if (verified.exp * 1000 - Date.now() < fiveMinutes) {
+    if (verifiedUser.exp * 1000 - Date.now() < fiveMinutes) {
       // Token about to expire, could trigger refresh here
+      cookieStore.delete(tokenName)
       return null
     }
     
-    return verified
-  } catch (error) {
-    console.error('Token verification failed:', error)
-    return null
-  }
+    return verifiedUser
 }
 
-export async function getUserFromToken(cookies) {
+export async function getUserFromToken(tableName, tokenName) {
   try {
-    const token = cookies.get("ftt_token")?.value
-    if (!token) {
-      console.warn('No token found in cookies')
+    if (!tableName) throw new Error('Table name is required to getUserFromToken.');
+    
+    const verifiedUser = await getUserIdAndEmailFromToken(tokenName)
+    if (!verifiedUser || !verifiedUser.user_id || !verifiedUser.email) {
+      console.warn('No user ID or email found in token', verifiedUser)
       return null
     }
-
-    const decoded = await verifyToken(token)
-    if (!decoded || !decoded.user_id) {
-      console.warn('Invalid or expired token')
-      cookies.delete("ftt_token")
-      return null
-    }
-
-    const user = await getUser(decoded.user_id)
+    const user = await getUser(verifiedUser.user_id, tableName)
     
     if (!user) {
       console.warn('User not found in database')
-      cookies.delete("ftt_token")
+      cookieStore.delete(tokenName)
+      return null
+    }
+    if (user.email !== verifiedUser.email) {
+      console.warn('User email mismatch')
+      cookieStore.delete(tokenName)
       return null
     }
 
     const { password, ...safeUser } = user
     return safeUser
   } catch (error) {
-    console.error('Auth check failed:', error)
+    console.error('Auth check failed:', error.message)
     return null
   }
 }
 
-export async function hydrateUserUsingEmailAndPassword(email, password) {
+export async function loginWithEmailAndPassword(email, password, tableName, tokenName) {
   try {
-    const user = await getUserByEmail(email)
+    if (!tableName) throw new Error('Table name is required to loginWithEmailAndPassword.');
+    if (!tokenName) throw new Error('Token name is required to loginWithEmailAndPassword.');
+    const user = await getUserByEmail(email, tableName)
     if (!user) {
       console.warn('User not found for email:', email)
       throw new Error('User not found')
@@ -81,14 +95,12 @@ export async function hydrateUserUsingEmailAndPassword(email, password) {
       throw new Error('Invalid password')
     }
 
+    await setToken(tokenName, user.user_id, user.email)
     const { password: _, ...userWithoutPassword } = user
     return userWithoutPassword
     
   } catch (error) {
-    console.error('Error in hydrateUserUsingEmailAndPassword:', {
-      message: error.message,
-      stack: error.stack
-    })
+    console.error('Error in loginWithEmailAndPassword:', error.message)
     throw error
   }
 }

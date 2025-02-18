@@ -13,7 +13,6 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     // Only check auth on initial mount
     const initialCheck = async () => {
-      console.log('[Auth] Initial check')
       // Skip auth check on login/register pages
       if (window.location.pathname === '/login' || 
           window.location.pathname === '/register') {
@@ -25,30 +24,12 @@ export function AuthProvider({ children }) {
     initialCheck()
   }, []) // Remove checkAuth from dependencies
 
-  // Modify route change handler
-  useEffect(() => {
-    const handleRouteChange = () => {
-      // Only check auth on protected routes
-      const isProtectedRoute = ['/conversations', '/account', '/getting-started']
-        .some(route => window.location.pathname.startsWith(route))
-      if (isProtectedRoute) {
-        console.log('[Auth] Protected route detected')
-        checkAuth()
-      }
-    }
-
-    window.addEventListener('popstate', handleRouteChange)
-    return () => window.removeEventListener('popstate', handleRouteChange)
-  }, [])
-
   const checkAuth = async () => {
     const randomNumber = Math.floor(Math.random()*100)
-    console.log('[Auth] Checking auth', randomNumber)
-    if (useAuthStore.getState().isLoading) {
-      console.log('[Auth] Already loading', randomNumber)
-      return // Prevent concurrent checks
-    }
-    console.log('[Auth] Starting auth check', randomNumber)
+    // if (useAuthStore.getState().isLoading) {
+    //   console.warn('[Auth] Already loading', randomNumber)
+    //   return // Prevent concurrent checks
+    // }
     setLoading(true)
     try {
       const response = await fetch('/api/auth/verify', {
@@ -56,17 +37,20 @@ export function AuthProvider({ children }) {
       })
 
       if (!response.ok) {
+        console.warn('[Auth] Verification failed', randomNumber)
         throw new Error('Verification failed', randomNumber)
       }
 
       const data = await response.json()
-      
+      console.log('[Auth] Verification successful', data)
       if (!data.authenticated) {
+        console.warn('[Auth] Not authenticated', randomNumber)
         clearAuth()
         return
       }
 
       if (!data.user || !data.user.user_id) {
+        console.warn('[Auth] Invalid user data', randomNumber)
         throw new Error('Invalid user data', randomNumber)
       }
       
@@ -77,7 +61,6 @@ export function AuthProvider({ children }) {
       clearAuth()
     } finally {
       setLoading(false)
-      console.log('[Auth] Finished auth check', randomNumber)
     }
   }
 
@@ -102,8 +85,7 @@ export function AuthProvider({ children }) {
       
       // Only redirect after confirmation
       const params = new URLSearchParams(window.location.search)
-      const from = params.get('from') || '/conversations'
-      console.log('[Auth] Redirecting to:', from)
+      const from = params.get('from') || "/"
       router.push(from)
     } catch (error) {
       clearAuth()
@@ -162,6 +144,7 @@ export function AuthProvider({ children }) {
   )
 }
 
+// Export the hook directly with the function declaration
 export function useAuth() {
   const { user, isAuthenticated, isLoading } = useAuthStore()
   const { login, logout, register } = useContext(AuthContext)

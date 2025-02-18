@@ -1,6 +1,6 @@
 {
 "name": "@gonextgames/utils-server",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publishConfig": {
       "registry": "https://registry.npmjs.org/",
       "access": "public"
@@ -12,7 +12,8 @@
     ],
     "scripts": {
       "build": "babel src -d dist --copy-files",
-      "prepare": "npm run build"
+      "prepare": "npm run build",
+      "dev": "babel src -d dist --copy-files --watch"
     },
     "dependencies": {
       "@aws-sdk/client-dynamodb": "^3.726.1",
