@@ -1,12 +1,12 @@
 {
 "name": "@gonextgames/utils-server",
-    "version": "0.0.14",
+    "version": "0.0.15",
     "publishConfig": {
       "registry": "https://registry.npmjs.org/",
       "access": "public"
     },
-    "main": "dist/index.js",
-    "module": "dist/index.js",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
     "files": [
       "dist"
     ],
@@ -43,8 +43,10 @@
   },
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
+      "node": "./dist/index.js",
+      "default": "./dist/index.js",
+      "browser": null
     }
-  }
+  },
+  "sideEffects": false
 }

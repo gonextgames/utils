@@ -7,9 +7,11 @@ const JWT_SECRET = process.env.JWT_SECRET_KEY
 
 async function getCookieStore() {
   try {
-    // Try to use Next.js cookies if available
-    const { cookies } = await import('next/headers');
-    return cookies();
+    if (typeof window === 'undefined') {
+      const { cookies } = await import('next/headers');
+      return cookies();
+    }
+    throw new Error('Cookie management only available server-side');
   } catch (error) {
     // Fallback implementation for non-Next.js environments
     return {
