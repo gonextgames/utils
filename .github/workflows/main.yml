@@ -23,55 +23,16 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org/'
           scope: '@gonextgames'
-
-      - name: Check package versions match
-        run: |
-          CLIENT_VERSION=$(node -p "require('./client/package.json').version")
-          SERVER_VERSION=$(node -p "require('./server/package.json').version")
-          if [ "$CLIENT_VERSION" != "$SERVER_VERSION" ]; then
-            echo "Error: Package versions do not match!"
-            echo "Client version: $CLIENT_VERSION"
-            echo "Server version: $SERVER_VERSION"
-            exit 1
-          fi
-          echo "Both packages at version $CLIENT_VERSION"
           
-      - name: Install dependencies (Client)
-        working-directory: ./client
-        run: |
-          rm -f package-lock.json
-          npm install --no-package-lock
-
-      - name: Install dependencies (Server)
-        working-directory: ./server
+      - name: Install dependencies
         run: |
           rm -f package-lock.json
           npm install --no-package-lock
 
       - name: Build packages
-        run: |
-          cd client && npm run build &
-          cd server && npm run build &
-          wait
+        run: npm run build
 
-      - name: Test server package exports
-        working-directory: ./server
-        run: |
-          npm link
-          npm run test-exports
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET: ${{ secrets.AWS_SECRET }}
-
-      - name: Publish client package
-        working-directory: ./client
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish server package
-        working-directory: ./server
+      - name: Publish package
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,3 +1,4 @@
+"use server"
 import nodemailer from 'nodemailer';
 
 const GONEXTGAMES_EMAIL = process.env.GONEXTGAMES_EMAIL;

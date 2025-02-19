@@ -1,3 +1,4 @@
+"use server"
 import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import crypto from 'crypto';
 

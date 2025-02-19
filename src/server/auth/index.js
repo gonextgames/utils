@@ -1,81 +1,8 @@
-import jwt from 'jsonwebtoken'
-import { getUser, getUserByEmail, createUser } from './users.js'
+'use server'
+
+import { getUser, getUserByEmail, createUser } from '../users'
 import { comparePasswords } from './passwordHashing.js'
 import { v4 as uuidv4 } from 'uuid';
-
-const JWT_SECRET = process.env.JWT_SECRET_KEY
-
-async function getCookieStore() {
-  try {
-    if (typeof window === 'undefined') {
-      const { cookies } = await import('next/headers');
-      return cookies();
-    }
-    throw new Error('Cookie management only available server-side');
-  } catch (error) {
-    // Fallback implementation for non-Next.js environments
-    return {
-      get: (name) => {
-        // Implement your fallback cookie getting logic here
-        throw new Error('Cookie management not implemented for this environment');
-      },
-      set: (name, value, options) => {
-        // Implement your fallback cookie setting logic here
-        throw new Error('Cookie management not implemented for this environment');
-      },
-      delete: (name) => {
-        // Implement your fallback cookie deletion logic here
-        throw new Error('Cookie management not implemented for this environment');
-      }
-    };
-  }
-}
-
-export async function setToken(tokenName, userId, email) {
-  try {
-    const payload = { user_id: userId, email: email }
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' })
-    const cookieStore = await getCookieStore()
-    cookieStore.set(tokenName, token, {
-      httpOnly: true,
-      secure: process.env.ENVIRONMENT === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 7 * 24 * 60 * 60 // 7 days
-    })
-  } catch (error) {
-    console.error('Error in generateToken:', error.message)
-    throw error
-  }
-}
-
-async function getUserIdAndEmailFromToken(tokenName) {
-  const cookieStore = await getCookieStore()
-  const token = cookieStore.get(tokenName)?.value
-  if (!token) {
-    // console.warn('No token found in cookies')
-    return null
-  }
-
-  const decodedToken = decodeURIComponent(token)
-  const verifiedUser = jwt.verify(decodedToken, JWT_SECRET)
-  
-  // Add additional validation
-  if (!verifiedUser || !verifiedUser.user_id || !verifiedUser.exp || !verifiedUser.email) {
-    console.warn('Invalid or expired token', verifiedUser)
-    return null
-  }
-  
-  // Check if token is about to expire (within 5 minutes)
-  const fiveMinutes = 5 * 60 * 1000
-  if (verifiedUser.exp * 1000 - Date.now() < fiveMinutes) {
-    // Token about to expire, could trigger refresh here
-    cookieStore.delete(tokenName)
-    return null
-  }
-  
-  return verifiedUser
-}
 
 export async function getUserFromToken(tableName, tokenName) {
   try {

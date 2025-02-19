@@ -1,7 +1,6 @@
+"use server"
 import { PutCommand, GetCommand, UpdateCommand, DeleteCommand, QueryCommand, BatchGetCommand } from '@aws-sdk/lib-dynamodb';
-import { dynamoDb } from '../dynamoDb.js';
-import { hashPassword } from './passwordHashing.js';
-import { v4 as uuidv4 } from 'uuid';
+import { dynamoDb } from './dynamoDb.js';
 
 export async function createUser(id, name, email, hashedPassword, otherData, tableName) {
   if (!tableName) throw new Error('Table name is required');
@@ -103,7 +102,6 @@ export async function getUserByEmail(email, tableName) {
   throw new Error('An error occurred while retrieving the user');
 }
 }
-
 
 export async function getUsersByIds(userIds, tableName) {
   try {

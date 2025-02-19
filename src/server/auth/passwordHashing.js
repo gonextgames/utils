@@ -1,3 +1,5 @@
+'use server'
+
 import bcryptjs from 'bcryptjs'
 
 export async function hashPassword(password) {
@@ -19,4 +21,4 @@ export async function comparePasswords(password, hashedPassword) {
         })
         throw error
     }
-}
+} 
