@@ -13,5 +13,5 @@ const client = new DynamoDBClient({
   }
 });
 
-// Create document client for easier data manipulation
-export const dynamoDb = DynamoDBDocumentClient.from(client); 
+const dynamoDb = DynamoDBDocumentClient.from(client);
+export { dynamoDb };

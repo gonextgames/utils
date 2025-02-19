@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
-import { getUser, getUserByEmail } from './users'
-import { comparePasswords } from './passwordHashing'
+import { getUser, getUserByEmail } from './users.js'
+import { comparePasswords } from './passwordHashing.js'
 import { cookies } from 'next/headers'
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY

@@ -1,6 +1,6 @@
 import { PutCommand, GetCommand, UpdateCommand, DeleteCommand, QueryCommand, BatchGetCommand } from '@aws-sdk/lib-dynamodb';
-import { dynamoDb } from '../dynamoDb';
-import { hashPassword } from './passwordHashing';
+import { dynamoDb } from '../dynamoDb.js';
+import { hashPassword } from './passwordHashing.js';
 import { v4 as uuidv4 } from 'uuid';
 
 async function createUser(id, name, email, hashedPassword, otherData, tableName) {

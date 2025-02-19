@@ -1,25 +1,26 @@
 {
 "name": "@gonextgames/utils-server",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "publishConfig": {
       "registry": "https://registry.npmjs.org/",
       "access": "public"
     },
     "main": "dist/index.js",
     "module": "dist/index.mjs",
+    "type": "module",
     "exports": {
       ".": {
-        "require": "./dist/index.js",
-        "import": "./dist/index.mjs"
+        "import": "./dist/index.js",
+        "require": "./dist/index.cjs"
       }
     },
     "files": [
       "dist"
     ],
     "scripts": {
-      "build": "babel src -d dist --copy-files",
+      "build": "babel src -d dist --copy-files --extensions \".js,.jsx\"",
       "prepare": "npm run build",
-      "dev": "babel src -d dist --copy-files --watch"
+      "dev": "babel src -d dist --copy-files --watch --extensions \".js,.jsx\""
     },
     "dependencies": {
       "@aws-sdk/client-dynamodb": "^3.726.1",
@@ -28,7 +29,6 @@
       "axios": "^1.7.9",
       "bcryptjs": "^2.4.3",
       "jsonwebtoken": "^9.0.0",
-      "next": "^15.1.4",
       "nodemailer": "^6.9.16",
       "openai": "^4.0.0"
     },
@@ -38,7 +38,6 @@
       "@babel/preset-env": "^7.23.9",
       "@babel/preset-react": "^7.23.9"
     },
-    "type": "module",
     "engines": {
     "node": "23.7.0"
   }

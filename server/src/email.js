@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 const GONEXTGAMES_EMAIL = process.env.GONEXTGAMES_EMAIL;
 const GONEXTGAMES_EMAIL_PASSWORD = process.env.GONEXTGAMES_EMAIL_PASSWORD;
@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-async function sendEmail({ to, subject,  html, unsubscribeToken }) {
+export async function sendEmail({ to, subject, html, unsubscribeToken }) {
   try {
     var finalHtml = html;
     if (unsubscribeToken) {
@@ -43,7 +43,3 @@ async function sendEmail({ to, subject,  html, unsubscribeToken }) {
     throw error;
   }
 }
-
-module.exports = {
-  sendEmail
-};
