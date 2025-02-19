@@ -1,8 +1,8 @@
-import { compare, hash } from 'bcryptjs'
+import bcryptjs from 'bcryptjs'
 
 export async function hashPassword(password) {
     try {  
-      return await hash(password, 10)
+      return await bcryptjs.hash(password, 10)
     } catch (error) {
       console.error('Error in hashPassword:', error)
       throw error
@@ -11,7 +11,7 @@ export async function hashPassword(password) {
   
 export async function comparePasswords(password, hashedPassword) {
     try {
-        return await compare(password, hashedPassword)
+        return await bcryptjs.compare(password, hashedPassword)
     } catch (error) {
         console.error('Error in comparePasswords:', {
         message: error.message,
