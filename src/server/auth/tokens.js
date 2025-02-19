@@ -30,7 +30,7 @@ export async function getUserIdAndEmailFromToken(tokenName) {
 export async function setToken(tokenName, userId, email) {
   const payload = { user_id: userId, email: email }
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' })
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   cookieStore.set(tokenName, token, {
     httpOnly: true,
     secure: process.env.ENVIRONMENT === 'production',

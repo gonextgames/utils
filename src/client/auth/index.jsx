@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, createContext, useContext } from 'react'
+import React, { useEffect, createContext, useContext } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from './authStore'
 
@@ -136,10 +136,15 @@ export function AuthProvider({ children }) {
   )
 }
 
-// Export the hook directly with the function declaration
 export function useAuth() {
   const { user, isAuthenticated, isLoading } = useAuthStore()
-  const { login, logout, register } = useContext(AuthContext)
+  const context = useContext(AuthContext)
+  
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+  
+  const { login, logout, register } = context
   
   return {
     user,

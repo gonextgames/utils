@@ -47,7 +47,7 @@ const { isAuthenticated, logout, user } = useAuth()
 ```
 - To change auth
 ```js
-import { useAuth } from '@gonextgames/utils-client'
+import { useAuth } from '@gonextgames/utils/client'
 // Call these functions to call the backend
 const { login/register/logout } = useAuth()
 ```
@@ -58,7 +58,7 @@ When implementing auth, you can use the `redirect` function with the `from` para
 - Implement /api/auth/verify for tokens
 
 ```js
-import { getUserFromToken } from '@gonextgames/utils-server'
+import { getUserFromToken } from '@gonextgames/utils/server/auth'
 
 export async function GET(req) {
   try {
@@ -77,7 +77,7 @@ export async function GET(req) {
 - Consume it with
 
 ```js
-import { getUserFromToken } from '@gonextgames/utils-server'
+import { getUserFromToken } from '@gonextgames/utils/server/auth'
 const user = await getUserFromToken("NAME_OF_USERS_TABLE", "TOKEN_NAME")
   if (!user) {
     redirect(`/login?from=${encodeURIComponent('/FROM-ENDPOINT')}`)

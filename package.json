@@ -1,14 +1,16 @@
 {
     "name": "@gonextgames/utils",
     "exports": {
-        "./client": "./dist/client/index.js",
+        "./client": {
+            "default": "./dist/client/index.js"
+        },
         "./client/*": "./dist/client/*.js",
-        "./server": "./dist/server/index.js",
-        "./server/*": "./dist/server/*.js",
-        "./client/auth": "./dist/client/auth/index.jsx",
-        "./server/auth": "./dist/server/auth/index.js"
+        "./server": {
+            "node": "./dist/server/index.js"
+        },
+        "./server/*": "./dist/server/*.js"
     },
-    "version": "0.0.15",
+    "version": "0.0.16",
     "publishConfig": {
         "registry": "https://registry.npmjs.org/",
         "access": "public"
@@ -49,6 +51,8 @@
         "node": ">=20.0.0"
     },
     "peerDependencies": {
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
         "next": "15.1.4"
     }
 }

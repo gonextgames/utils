@@ -1,8 +1,7 @@
-'use server'
-
 import { getUser, getUserByEmail, createUser } from '../users'
 import { comparePasswords } from './passwordHashing.js'
 import { v4 as uuidv4 } from 'uuid';
+import { getUserIdAndEmailFromToken, setToken } from './tokens.js'
 
 export async function getUserFromToken(tableName, tokenName) {
   try {
