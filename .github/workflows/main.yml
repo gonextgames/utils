@@ -59,6 +59,10 @@ jobs:
         run: |
           npm link
           npm run test-exports
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET: ${{ secrets.AWS_SECRET }}
 
       - name: Publish client package
         working-directory: ./client
