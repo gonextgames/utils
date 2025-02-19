@@ -3,7 +3,7 @@ import { dynamoDb } from '../dynamoDb.js';
 import { hashPassword } from './passwordHashing.js';
 import { v4 as uuidv4 } from 'uuid';
 
-async function createUser(id, name, email, hashedPassword, otherData, tableName) {
+export async function createUser(id, name, email, hashedPassword, otherData, tableName) {
   if (!tableName) throw new Error('Table name is required');
   try {
     const item = {
@@ -104,42 +104,6 @@ export async function getUserByEmail(email, tableName) {
 }
 }
 
-export async function registerUser(name, email, password, otherData, tableName) {
-  try {
-    if (!tableName) throw new Error('Table name is required');
-    
-    // Check if user exists
-    const existingUser = await getUserByEmail(email, tableName)
-    if (existingUser) {
-      console.warn('Email already registered:', email)
-      throw new Error('Email already registered')
-    }
-
-    // Hash password
-    const hashedPassword = await hashPassword(password)
-
-    // Create user object with user_id
-    const user = {
-      user_id: uuidv4(),
-      name,
-      email: email,
-      contact_email: email,
-      password: hashedPassword,
-    }
-
-    await createUser(user.user_id, user.name, user.email, user.password, otherData, tableName)
-
-    const { password: _, ...userWithoutPassword } = user
-    return userWithoutPassword
-    
-  } catch (error) {
-    console.error('Error in registerUser:', {
-      message: error.message,
-      stack: error.stack
-    })
-    throw new Error('An error occurred while registering the user');
-  }
-}
 
 export async function getUsersByIds(userIds, tableName) {
   try {

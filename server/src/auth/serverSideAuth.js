@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
-import { getUser, getUserByEmail } from './users.js'
+import { getUser, getUserByEmail, createUser } from './users.js'
 import { comparePasswords } from './passwordHashing.js'
+import { v4 as uuidv4 } from 'uuid';
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY
 
@@ -28,7 +29,7 @@ async function getCookieStore() {
   }
 }
 
-async function setToken(tokenName, userId, email) {
+export async function setToken(tokenName, userId, email) {
   try {
     const payload = { user_id: userId, email: email }
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' })
@@ -104,10 +105,10 @@ export async function getUserFromToken(tableName, tokenName) {
   }
 }
 
-export async function loginWithEmailAndPassword(email, password, tableName, tokenName) {
+export async function loginWithEmailAndPasswordAndSetToken(email, password, tableName, tokenName) {
   try {
-    if (!tableName) throw new Error('Table name is required to loginWithEmailAndPassword.');
-    if (!tokenName) throw new Error('Token name is required to loginWithEmailAndPassword.');
+    if (!tableName) throw new Error('Table name is required to loginWithEmailAndPasswordAndSetToken.');
+    if (!tokenName) throw new Error('Token name is required to loginWithEmailAndPasswordAndSetToken.');
     const user = await getUserByEmail(email, tableName)
     if (!user) {
       console.warn('User not found for email:', email)
@@ -124,7 +125,43 @@ export async function loginWithEmailAndPassword(email, password, tableName, toke
     return userWithoutPassword
     
   } catch (error) {
-    console.error('Error in loginWithEmailAndPassword:', error.message)
+    console.error('Error in loginWithEmailAndPasswordAndSetToken:', error.message)
     throw error
+  }
+}
+export async function registerUserAndSetToken(name, email, password, otherData, tableName) {
+  try {
+    if (!tableName) throw new Error('Table name is required');
+    
+    // Check if user exists
+    const existingUser = await getUserByEmail(email, tableName)
+    if (existingUser) {
+      console.warn('Email already registered:', email)
+      throw new Error('Email already registered')
+    }
+
+    // Hash password
+    const hashedPassword = await hashPassword(password)
+
+    // Create user object with user_id
+    const user = {
+      user_id: uuidv4(),
+      name,
+      email: email,
+      contact_email: email,
+      password: hashedPassword,
+    }
+
+    await createUser(user.user_id, user.name, user.email, user.password, otherData, tableName)
+    await setToken('token', user.user_id, user.email)
+    const { password: _, ...userWithoutPassword } = user
+    return userWithoutPassword
+    
+  } catch (error) {
+    console.error('Error in registerUserAndSetToken:', {
+      message: error.message,
+      stack: error.stack
+    })
+    throw new Error('An error occurred while registering the user');
   }
 }

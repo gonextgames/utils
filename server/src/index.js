@@ -1,10 +1,10 @@
 export {
   getUserFromToken,
-  loginWithEmailAndPassword,
+  loginWithEmailAndPasswordAndSetToken,
+  registerUserAndSetToken,
 } from './auth/serverSideAuth.js';
 
 export {
-    registerUser,
     getUser,
     getUsersByIds,
     updateUser,

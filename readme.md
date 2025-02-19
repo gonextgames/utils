@@ -91,7 +91,7 @@ const user = await getUserFromToken("NAME_OF_USERS_TABLE", "TOKEN_NAME")
 const user = await registerUser(userData.name, userData.email, userData.password, { link: userData.link }, 'bgp_users')
 
 // Login
-const user = await loginWithEmailAndPassword(email, password, 'bgp_users', "token")
+const user = await loginWithEmailAndPasswordAndSetToken(email, password, 'bgp_users', "token")
 
 //Logout 
 const cookieStore = await cookies()
