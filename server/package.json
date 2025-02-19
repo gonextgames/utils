@@ -38,5 +38,11 @@
   },
   "peerDependencies": {
     "next": "15.1.4"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
   }
 }
