@@ -14,7 +14,8 @@
     "scripts": {
       "build": "babel src -d dist --copy-files --extensions \".js,.jsx\"",
       "prepare": "npm run build",
-      "dev": "babel src -d dist --copy-files --watch --extensions \".js,.jsx\""
+      "dev": "babel src -d dist --copy-files --watch --extensions \".js,.jsx\"",
+      "test-exports": "node -e \"import('@gonextgames/utils-server').then(module => console.log('Exports available:', Object.keys(module))).catch(err => { console.error(err); process.exit(1); })\""
     },
     "dependencies": {
       "@aws-sdk/client-dynamodb": "^3.726.1",

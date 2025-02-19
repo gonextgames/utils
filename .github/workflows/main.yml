@@ -54,6 +54,11 @@ jobs:
           cd server && npm run build &
           wait
 
+      - name: Test server package exports
+        working-directory: ./server
+        run: |
+          npm link
+          npm run test-exports
 
       - name: Publish client package
         working-directory: ./client
